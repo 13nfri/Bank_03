@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="controller" class="sample.bankapp.controller.FixedDepositControllerImpl" scope="prototype">
+		<property name="fixedDepositService" ref="service"></property>
+	</bean>
+	<bean id="service" class="sample.bankapp.service.FixedDepositServiceImpl">
+		<property name="fixedDepositDao" ref="dao"></property>
+	</bean>
+	<!-- 
+		<bean id="dao" class="sample.bankapp.dao.FixedDepositDaoImpl"></bean>
+		<bean id="dao1" class="sample.bankapp.dao.FixedDepositDaoImpl"></bean>
+		<bean id="dbcpDao" class="sample.bankapp.dao.FixedDepositDaoDbcp"></bean>
+		<bean id="mybatisDao" class="sample.bankapp.dao.FixedDepositDaoMybatis"></bean>
+
+	 Factory 클래스일 때 지원되는 기능, factory-method, 원래 property는 setter만 사용할 수 있지만 factory 일 때 getter도 사용 할 수 있다. 
+	 <bean id="dao" class="sample.bankapp.dao.FixedDepositDaoFactory" factory-method="getFixedDepositDao" >
+		factory-method에 인자를 넘길 댄 생성자로 넘겨준다 
+		<constructor-arg value="mybatis"></constructor-arg>
+	 </bean>
+	 -->
+	 <bean id="factoryDao" class="sample.bankapp.dao.FixedDepositDaoFactory"></bean>
+	 
+	 <bean id="dao" factory-bean="factoryDao" factory-method="getFixedDepositDao" >
+		<constructor-arg value="mybatis"></constructor-arg>
+		<!-- factory에 이 setter가 없지만 factory안에 생성되는 클래스들에게 자동으로 가게 되있다. -->
+		<property name="databaseInfo" ref="databaseInfo"></property>
+	 </bean>
+	 
+	 <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+	 
+	 <bean id="databaseInfo" class="sample.bankapp.dao.DatabaseInfo"></bean>
+</beans>
